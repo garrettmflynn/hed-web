@@ -157,18 +157,16 @@ def schema_validate(hed_schema, display_name):
     """
 
     schema_version = hed_schema.header_attributes.get('version', 'Unknown')
-    issues = hed_schema.check_compliance()
-    if issues:
-        issue_str = get_printable_issue_string(issues, f"Schema HED 3G compliance errors for {display_name}:")
-        file_name = generate_filename(display_name, name_suffix='schema_3G_compliance_errors', extension='.txt')
-        return {'command': base_constants.COMMAND_VALIDATE,
-                base_constants.COMMAND_TARGET: 'schema',
-                'data': issue_str, 'output_display_name': file_name,
-                'schema_version': schema_version, 'msg_category': 'warning',
-                'msg': 'Schema is not HED 3G compliant'}
-    else:
+    if not (issues := hed_schema.check_compliance()):
         return {'command': base_constants.COMMAND_VALIDATE,
                 base_constants.COMMAND_TARGET: 'schema',
                 'data': '', 'output_display_name': display_name,
                 'schema_version': schema_version, 'msg_category': 'success',
                 'msg': 'Schema had no HED-3G validation errors'}
+    issue_str = get_printable_issue_string(issues, f"Schema HED 3G compliance errors for {display_name}:")
+    file_name = generate_filename(display_name, name_suffix='schema_3G_compliance_errors', extension='.txt')
+    return {'command': base_constants.COMMAND_VALIDATE,
+            base_constants.COMMAND_TARGET: 'schema',
+            'data': issue_str, 'output_display_name': file_name,
+            'schema_version': schema_version, 'msg_category': 'warning',
+            'msg': 'Schema is not HED 3G compliant'}

@@ -73,9 +73,10 @@ def process(arguments):
     check_for_warnings = arguments.get(base_constants.CHECK_FOR_WARNINGS, False)
     if command == base_constants.COMMAND_VALIDATE:
         results = spreadsheet_validate(hed_schema, spreadsheet, check_for_warnings=check_for_warnings)
-    elif command == base_constants.COMMAND_TO_SHORT:
-        results = spreadsheet_convert(hed_schema, spreadsheet, command, check_for_warnings=check_for_warnings)
-    elif command == base_constants.COMMAND_TO_LONG:
+    elif command in [
+        base_constants.COMMAND_TO_SHORT,
+        base_constants.COMMAND_TO_LONG,
+    ]:
         results = spreadsheet_convert(hed_schema, spreadsheet, command, check_for_warnings=check_for_warnings)
     else:
         raise HedFileError('UnknownSpreadsheetProcessingMethod', f"Command {command} is missing or invalid", "")

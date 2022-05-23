@@ -137,10 +137,7 @@ def generate_sidecar(events, columns_selected):
     for column_name, column_type in columns_selected.items():
         if column_name not in columns_info:
             continue
-        if column_type:
-            column_values = list(columns_info[column_name].keys())
-        else:
-            column_values = None
+        column_values = list(columns_info[column_name].keys()) if column_type else None
         hed_dict[column_name] = generate_sidecar_entry(column_name, column_values=column_values)
     display_name = events.name
 
@@ -207,12 +204,17 @@ def validate(hed_schema, events, sidecar=None, check_for_warnings=False):
     validator = HedValidator(hed_schema=hed_schema)
     issue_str = ''
     if sidecar:
-        issues = sidecar.validate_entries(validator, check_for_warnings=check_for_warnings)
-        if issues:
-            issue_str = issue_str + get_printable_issue_string(issues, title="Sidecar definition errors:")
-    if not issue_str:
-        issues = events.validate_file(validator, check_for_warnings=check_for_warnings)
-        if issues:
+        if issues := sidecar.validate_entries(
+            validator, check_for_warnings=check_for_warnings
+        ):
+            issue_str += get_printable_issue_string(
+                issues, title="Sidecar definition errors:"
+            )
+
+    if issues := events.validate_file(
+        validator, check_for_warnings=check_for_warnings
+    ):
+        if not issue_str:
             issue_str = get_printable_issue_string(issues, title="Event file errors:")
 
     if issue_str:

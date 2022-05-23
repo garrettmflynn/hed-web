@@ -70,7 +70,10 @@ def process(arguments):
     """
     hed_schema = arguments.get(base_constants.SCHEMA, None)
     command = arguments.get(base_constants.COMMAND, None)
-    if command == base_constants.COMMAND_EXTRACT_SPREADSHEET or command == base_constants.COMMAND_MERGE_SPREADSHEET:
+    if command in [
+        base_constants.COMMAND_EXTRACT_SPREADSHEET,
+        base_constants.COMMAND_MERGE_SPREADSHEET,
+    ]:
         pass
     elif not hed_schema or not isinstance(hed_schema, hedschema.hed_schema.HedSchema):
         raise HedFileError('BadHedSchema', "Please provide a valid HedSchema", "")
@@ -83,7 +86,10 @@ def process(arguments):
     include_description_tags = arguments.get(base_constants.INCLUDE_DESCRIPTION_TAGS, False)
     if command == base_constants.COMMAND_VALIDATE:
         results = sidecar_validate(hed_schema, sidecar, check_for_warnings=check_for_warnings)
-    elif command == base_constants.COMMAND_TO_SHORT or command == base_constants.COMMAND_TO_LONG:
+    elif command in [
+        base_constants.COMMAND_TO_SHORT,
+        base_constants.COMMAND_TO_LONG,
+    ]:
         results = sidecar_convert(hed_schema, sidecar, command=command, expand_defs=expand_defs)
     elif command == base_constants.COMMAND_EXTRACT_SPREADSHEET:
         results = sidecar_extract(sidecar)
@@ -183,7 +189,10 @@ def sidecar_merge(sidecar, spreadsheet, include_description_tags=False):
     """
 
     if not spreadsheet:
-        raise HedFileError('MissingSpreadsheet', f'Cannot merge spreadsheet with sidecar', '')
+        raise HedFileError(
+            'MissingSpreadsheet', 'Cannot merge spreadsheet with sidecar', ''
+        )
+
     df = spreadsheet.dataframe
     hed_dict = df_to_hed(df, description_tag=include_description_tags)
     json_string = sidecar.get_as_json_string()
@@ -214,8 +223,9 @@ def sidecar_validate(hed_schema, sidecar, check_for_warnings=False):
     schema_version = hed_schema.header_attributes.get('version', 'Unknown version')
     display_name = sidecar.name
     validator = HedValidator(hed_schema)
-    issues = sidecar.validate_entries(validator, check_for_warnings=check_for_warnings)
-    if issues:
+    if issues := sidecar.validate_entries(
+        validator, check_for_warnings=check_for_warnings
+    ):
         issue_str = get_printable_issue_string(issues, f"JSON dictionary {sidecar.name} validation errors")
         file_name = generate_filename(display_name, name_suffix='validation_errors', extension='.txt')
         return {base_constants.COMMAND: base_constants.COMMAND_VALIDATE,
