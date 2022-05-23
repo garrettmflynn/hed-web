@@ -88,10 +88,12 @@ class Test(TestWebBase):
         spreadsheet = SpreadsheetInput(spreadsheet_path, worksheet_name='LKT 8HED3A',
                                        tag_columns=[4], has_column_names=True,
                                        column_prefix_dictionary=prefix_dict, name=spreadsheet_path)
-        arguments = {base_constants.SCHEMA: hed_schema, base_constants.SPREADSHEET: spreadsheet,
-                     base_constants.COMMAND: base_constants.COMMAND_VALIDATE,
-                     base_constants.CHECK_FOR_WARNINGS: True}
-        arguments[base_constants.SCHEMA] = hed_schema
+        arguments = {
+            base_constants.SPREADSHEET: spreadsheet,
+            base_constants.COMMAND: base_constants.COMMAND_VALIDATE,
+            base_constants.CHECK_FOR_WARNINGS: True,
+            base_constants.SCHEMA: hed_schema,
+        }
 
         with self.app.app_context():
             results = process(arguments)

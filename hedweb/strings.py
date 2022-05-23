@@ -28,17 +28,20 @@ def get_input_from_form(request):
         A dictionary containing input arguments for calling the underlying string processing functions.
     """
     hed_schema = get_hed_schema_from_pull_down(request)
-    hed_string = request.form.get(base_constants.STRING_INPUT, None)
-    if hed_string:
+    if hed_string := request.form.get(base_constants.STRING_INPUT, None):
         string_list = [HedString(hed_string)]
     else:
         raise HedFileError('EmptyHedString', 'Must enter a HED string', '')
-    arguments = {base_constants.COMMAND: request.form.get(base_constants.COMMAND_OPTION, ''),
-                 base_constants.SCHEMA: hed_schema,
-                 base_constants.STRING_LIST: string_list,
-                 base_constants.CHECK_FOR_WARNINGS:
-                     form_has_option(request, base_constants.CHECK_FOR_WARNINGS, 'on')}
-    return arguments
+    return {
+        base_constants.COMMAND: request.form.get(
+            base_constants.COMMAND_OPTION, ''
+        ),
+        base_constants.SCHEMA: hed_schema,
+        base_constants.STRING_LIST: string_list,
+        base_constants.CHECK_FOR_WARNINGS: form_has_option(
+            request, base_constants.CHECK_FOR_WARNINGS, 'on'
+        ),
+    }
 
 
 def process(arguments):
@@ -64,9 +67,10 @@ def process(arguments):
         raise HedFileError('EmptyHedStringList', "Please provide a list of HED strings to be processed", "")
     if command == base_constants.COMMAND_VALIDATE:
         results = validate(hed_schema, string_list, check_for_warnings=check_for_warnings)
-    elif command == base_constants.COMMAND_TO_SHORT:
-        results = convert(hed_schema, string_list, command, check_for_warnings=check_for_warnings)
-    elif command == base_constants.COMMAND_TO_LONG:
+    elif command in [
+        base_constants.COMMAND_TO_SHORT,
+        base_constants.COMMAND_TO_LONG,
+    ]:
         results = convert(hed_schema, string_list, command, check_for_warnings=check_for_warnings)
     else:
         raise HedFileError('UnknownProcessingMethod', f'Command {command} is missing or invalid', '')
@@ -144,8 +148,9 @@ def validate(hed_schema, string_list, check_for_warnings=False):
 
     validation_errors = []
     for pos, h_string in enumerate(string_list, start=1):
-        issues = h_string.validate(hed_validator, check_for_warnings=check_for_warnings)
-        if issues:
+        if issues := h_string.validate(
+            hed_validator, check_for_warnings=check_for_warnings
+        ):
             validation_errors.append(get_printable_issue_string(issues, f"Errors for HED string {pos}:"))
     if validation_errors:
         return {base_constants.COMMAND: base_constants.COMMAND_VALIDATE,

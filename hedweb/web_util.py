@@ -47,10 +47,12 @@ def form_has_file(request, file_field, valid_extensions=None):
 
     """
 
-    if file_field in request.files and file_extension_is_valid(request.files[file_field].filename, valid_extensions):
-        return True
-    else:
-        return False
+    return bool(
+        file_field in request.files
+        and file_extension_is_valid(
+            request.files[file_field].filename, valid_extensions
+        )
+    )
 
 
 def form_has_option(request, option_name, target_value):
@@ -71,9 +73,10 @@ def form_has_option(request, option_name, target_value):
         True if the target radio button has been set and false otherwise
     """
 
-    if option_name in request.form and request.form[option_name] == target_value:
-        return True
-    return False
+    return (
+        option_name in request.form
+        and request.form[option_name] == target_value
+    )
 
 
 def form_has_url(request, url_field, valid_extensions=None):
@@ -132,8 +135,7 @@ def generate_download_file_from_text(download_text, display_name=None,
     def generate():
         if header:
             yield header
-        for issue in download_text.splitlines(True):
-            yield issue
+        yield from download_text.splitlines(True)
 
     return Response(generate(), mimetype='text/plain charset=utf-8',
                     headers={'Content-Disposition': f"attachment filename={display_name}",
@@ -153,7 +155,10 @@ def generate_download_spreadsheet(results,  msg_category='success', msg=''):
     buffer.seek(0)
     response = make_response()
     response.data = buffer.read()
-    response.headers['Content-Disposition'] = 'attachment; filename=' + display_name
+    response.headers[
+        'Content-Disposition'
+    ] = f'attachment; filename={display_name}'
+
     response.headers['Category'] = msg_category
     response.headers['Message'] = msg
     response.mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -202,8 +207,7 @@ def get_hed_schema_from_pull_down(request):
     elif request.form[base_constants.SCHEMA_VERSION] != base_constants.OTHER_VERSION_OPTION:
         hed_file_path = hedschema.get_path_from_hed_version(request.form[base_constants.SCHEMA_VERSION])
         hed_schema = hedschema.load_schema(hed_file_path)
-    elif request.form[base_constants.SCHEMA_VERSION] == \
-            base_constants.OTHER_VERSION_OPTION and base_constants.SCHEMA_PATH in request.files:
+    elif base_constants.SCHEMA_PATH in request.files:
         f = request.files[base_constants.SCHEMA_PATH]
         hed_schema = hedschema.from_string(f.read(file_constants.BYTE_LIMIT).decode('ascii'),
                                            file_type=secure_filename(f.filename))
@@ -233,23 +237,12 @@ def handle_error(ex, hed_info=None, title=None, return_as_str=True):
 
     if not hed_info:
         hed_info = {}
-    if hasattr(ex, 'error_type'):
-        error_code = ex.error_type
-    else:
-        error_code = type(ex).__name__
-
+    error_code = ex.error_type if hasattr(ex, 'error_type') else type(ex).__name__
     if not title:
         title = ''
-    if hasattr(ex, 'message'):
-        message = ex.message
-    else:
-        message = str(ex)
-
+    message = ex.message if hasattr(ex, 'message') else str(ex)
     hed_info['message'] = f"{title}[{error_code}: {message}]"
-    if return_as_str:
-        return json.dumps(hed_info)
-    else:
-        return hed_info
+    return json.dumps(hed_info) if return_as_str else hed_info
 
 
 def handle_http_error(ex):
@@ -266,14 +259,8 @@ def handle_http_error(ex):
 
 
     """
-    if hasattr(ex, 'error_type'):
-        error_code = ex.error_type
-    else:
-        error_code = type(ex).__name__
-    if hasattr(ex, 'message'):
-        message = ex.message
-    else:
-        message = str(ex)
+    error_code = ex.error_type if hasattr(ex, 'error_type') else type(ex).__name__
+    message = ex.message if hasattr(ex, 'message') else str(ex)
     error_message = f"{error_code}: [{message}]"
     return generate_text_response('', msg_category='error', msg=error_message)
 

@@ -56,8 +56,7 @@ def get_column_parameters(arguments, params):
     arguments[base_constants.COLUMNS_SELECTED] = columns_selected
     columns_included = []
     if 'columns_included' in params:
-        for column in params['columns_included']:
-            columns_included.append(column)
+        columns_included.extend(iter(params['columns_included']))
     arguments[base_constants.COLUMNS_INCLUDED] = columns_included
 
 
@@ -82,7 +81,10 @@ def get_sidecar(arguments, params):
                 merged_sidecar[key] = item
         sidecar_str = json.dumps(merged_sidecar)
     if sidecar_str:
-        arguments[base_constants.JSON_SIDECAR] = Sidecar(file=io.StringIO(sidecar_str), name=f"JSON_Sidecar")
+        arguments[base_constants.JSON_SIDECAR] = Sidecar(
+            file=io.StringIO(sidecar_str), name="JSON_Sidecar"
+        )
+
     else:
         arguments[base_constants.JSON_SIDECAR] = None
 
@@ -110,9 +112,7 @@ def get_input_objects(arguments, params):
                              tag_columns=tag_columns, has_column_names=has_column_names,
                              column_prefix_dictionary=prefix_dict, name='spreadsheet.tsv')
     if base_constants.STRING_LIST in params and params[base_constants.STRING_LIST]:
-        s_list = []
-        for s in params[base_constants.STRING_LIST]:
-            s_list.append(HedString(s))
+        s_list = [HedString(s) for s in params[base_constants.STRING_LIST]]
         arguments[base_constants.STRING_LIST] = s_list
 
 

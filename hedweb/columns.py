@@ -36,10 +36,9 @@ def create_column_selections(form_dict):
         if name_key not in form_dict:
             continue
         name = form_dict[name_key]
-        if form_dict.get('column_' + pieces[1] + '_category', None) == 'on':
-            columns_selections[name] = True
-        else:
-            columns_selections[name] = False
+        columns_selections[name] = (
+            form_dict.get('column_' + pieces[1] + '_category', None) == 'on'
+        )
 
     return columns_selections
 
@@ -60,10 +59,7 @@ def create_columns_included(form_dict):
 
 
 def create_columns_info(columns_file, has_column_names: True, sheet_name: None):
-    header = None
-    if has_column_names:
-        header = 0
-
+    header = 0 if has_column_names else None
     sheet_names = None
     filename = columns_file.filename
     file_ext = os.path.splitext(filename.lower())[1]
@@ -80,22 +76,23 @@ def create_columns_info(columns_file, has_column_names: True, sheet_name: None):
     col_dict = BidsTabularSummary()
     col_dict.update(dataframe)
     col_counts = col_dict.get_number_unique_values()
-    columns_info = {base_constants.COLUMNS_FILE: filename, base_constants.COLUMN_LIST: col_list,
-                    base_constants.COLUMN_COUNTS: col_counts,
-                    base_constants.WORKSHEET_SELECTED: sheet_name, base_constants.WORKSHEET_NAMES: sheet_names}
-    return columns_info
+    return {
+        base_constants.COLUMNS_FILE: filename,
+        base_constants.COLUMN_LIST: col_list,
+        base_constants.COLUMN_COUNTS: col_counts,
+        base_constants.WORKSHEET_SELECTED: sheet_name,
+        base_constants.WORKSHEET_NAMES: sheet_names,
+    }
 
 
 def dataframe_from_worksheet(worksheet, has_column_names):
     if not has_column_names:
-        data_frame = DataFrame(worksheet.values)
-    else:
-        data = worksheet.values
-        # first row is columns
-        cols = next(data)
-        data = list(data)
-        data_frame = DataFrame(data, columns=cols)
-    return data_frame
+        return DataFrame(worksheet.values)
+    data = worksheet.values
+    # first row is columns
+    cols = next(data)
+    data = list(data)
+    return DataFrame(data, columns=cols)
 
 
 def get_columns_request(request):
@@ -143,8 +140,5 @@ def get_worksheet(excel_file, sheet_name):
         raise HedFileError('BadExcelFile', 'Excel files must have worksheets', None)
     if sheet_name and sheet_name not in sheet_names:
         raise HedFileError('BadWorksheetName', f'Worksheet {sheet_name} not in Excel file', '')
-    if sheet_name:
-        worksheet = wb[sheet_name]
-    else:
-        worksheet = wb.worksheets[0]
+    worksheet = wb[sheet_name] if sheet_name else wb.worksheets[0]
     return worksheet, sheet_names
