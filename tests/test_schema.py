@@ -7,14 +7,14 @@ from tests.test_web_base import TestWebBase
 
 class Test(TestWebBase):
     def test_generate_input_from_schema_form_empty(self):
-        from hedweb.schema import get_input_from_form
+        from schema import get_input_from_form
         self.assertRaises(TypeError, get_input_from_form, {},
                           "An exception is raised if an empty request is passed to generate_input_from_schema")
 
     def test_get_input_from_schema_form_valid(self):
         from hed.schema import HedSchema
-        from hedweb.constants import base_constants
-        from hedweb.schema import get_input_from_form
+        from constants import base_constants
+        from schema import get_input_from_form
         with self.app.test:
             schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
             with open(schema_path, 'rb') as fp:
@@ -31,7 +31,7 @@ class Test(TestWebBase):
                              "get_input_from_form should have check_warnings false when not given")
 
     def test_schema_process(self):
-        from hedweb.schema import process
+        from schema import process
         from hed.errors.exceptions import HedFileError
         arguments = {'schema_path': ''}
         try:
@@ -44,7 +44,7 @@ class Test(TestWebBase):
             self.fail('process should have thrown a HedFileError exception when schema_path was empty')
 
     def test_schema_check(self):
-        from hedweb.schema import schema_validate
+        from schema import schema_validate
         from hed import schema as hedschema
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
         hed_schema = hedschema.load_schema(schema_path)
@@ -61,7 +61,7 @@ class Test(TestWebBase):
             self.assertFalse(results['data'], "HED8.0.0 is HED-3G compliant")
 
     def test_schema_convert(self):
-        from hedweb.schema import schema_convert
+        from schema import schema_convert
         from hed import schema as hedschema
         from hed.errors.exceptions import HedFileError
 

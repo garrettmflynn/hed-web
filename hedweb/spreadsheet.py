@@ -7,9 +7,9 @@ from hed.models import SpreadsheetInput
 from hed.util import generate_filename, get_file_extension
 from hed.validator import HedValidator
 
-from hedweb.constants import base_constants, file_constants
-from hedweb.columns import get_prefix_dict
-from hedweb.web_util import form_has_option, get_hed_schema_from_pull_down
+from constants import base_constants, file_constants
+from columns import get_prefix_dict
+from web_util import form_has_option, get_hed_schema_from_pull_down
 
 
 app_config = current_app.config

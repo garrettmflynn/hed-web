@@ -7,12 +7,12 @@ from werkzeug.wrappers import Request
 from tests.test_web_base import TestWebBase
 from hed import schema as hedschema
 from hed import models
-from hedweb.constants import base_constants
+from constants import base_constants
 
 
 class Test(TestWebBase):
     def test_get_input_from_service_request_empty(self):
-        from hedweb.services import get_input_from_request
+        from services import get_input_from_request
         self.assertRaises(TypeError, get_input_from_request, {},
                           "An exception should be raised if an empty request is passed")
         self.assertTrue(1, "Testing get_input_from_request")
@@ -20,7 +20,7 @@ class Test(TestWebBase):
     def test_get_input_from_service_request(self):
         from hed.models.sidecar import Sidecar
         from hed.schema import HedSchema
-        from hedweb.services import get_input_from_request
+        from services import get_input_from_request
         with self.app.test:
             json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
             with open(json_path, 'rb') as fp:
@@ -41,20 +41,20 @@ class Test(TestWebBase):
                             "get_input_from_request should have check_warnings true when on")
 
     def test_services_process_empty(self):
-        from hedweb.services import process
+        from services import process
         arguments = {'service': ''}
         response = process(arguments)
         self.assertEqual(response["error_type"], "HEDServiceMissing", "process must have a service key")
 
     def test_services_list(self):
-        from hedweb.services import services_list
+        from services import services_list
         with self.app.app_context():
             results = services_list()
             self.assertIsInstance(results, dict, "services_list returns a dictionary")
             self.assertTrue(results["data"], "services_list return dictionary has a data key with non empty value")
 
     def test_process_services_sidecar(self):
-        from hedweb.services import process
+        from services import process
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         with open(json_path) as f:
             data = json.load(f)

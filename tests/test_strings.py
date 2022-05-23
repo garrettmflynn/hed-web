@@ -6,18 +6,18 @@ from werkzeug.wrappers import Request
 from tests.test_web_base import TestWebBase
 import hed.schema as hedschema
 from hed.models import HedString
-from hedweb.constants import base_constants
+from constants import base_constants
 
 
 class Test(TestWebBase):
     def test_get_input_from_string_form_empty(self):
-        from hedweb.strings import get_input_from_form
+        from strings import get_input_from_form
         self.assertRaises(TypeError, get_input_from_form, {},
                           "An exception is raised if an empty request is passed to get_input_from_form")
 
     def test_get_input_from_string_form(self):
         from hed.schema import HedSchema
-        from hedweb.strings import get_input_from_form
+        from strings import get_input_from_form
         with self.app.test:
             environ = create_environ(data={base_constants.STRING_INPUT: 'Red,Blue',
                                            base_constants.SCHEMA_VERSION: '8.0.0',
@@ -35,7 +35,7 @@ class Test(TestWebBase):
                             "get_input_from_form should have check_warnings true when on")
 
     def test_string_process(self):
-        from hedweb.strings import process
+        from strings import process
         from hed.errors.exceptions import HedFileError
         arguments = {}
         try:
@@ -48,7 +48,7 @@ class Test(TestWebBase):
             self.fail('string_process should have thrown a HedFileError exception string_list is empty')
 
     def test_string_convert_to_short_invalid(self):
-        from hedweb.strings import convert
+        from strings import convert
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
         hed_schema = hedschema.load_schema(schema_path)
         string_list = [HedString('Red, Blech')]
@@ -58,7 +58,7 @@ class Test(TestWebBase):
             self.assertEqual('warning', results['msg_category'], "hedstring_convert issue warning if unsuccessful")
 
     def test_string_convert_to_short_valid(self):
-        from hedweb.strings import convert
+        from strings import convert
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
         hed_schema = hedschema.load_schema(schema_path)
         string_list = [HedString('Property/Informational-property/Description/Blech, Blue')]
@@ -73,7 +73,7 @@ class Test(TestWebBase):
                              "hedstring_convert should return success if converted")
 
     def test_string_convert_to_long(self):
-        from hedweb.strings import convert
+        from strings import convert
         string_list = [HedString('Red'), HedString('Blue')]
 
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -85,7 +85,7 @@ class Test(TestWebBase):
                              "hedstring_convert should return success if converted")
 
     def test_string_validate(self):
-        from hedweb.strings import validate
+        from strings import validate
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
         hed_schema = hedschema.load_schema(schema_path)
         string_list = [HedString('Red'), HedString('Blech')]

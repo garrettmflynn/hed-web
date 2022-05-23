@@ -5,7 +5,7 @@ from tests.test_web_base import TestWebBase
 class Test(TestWebBase):
 
     def test_create_column_selections(self):
-        from hedweb.columns import create_column_selections
+        from columns import create_column_selections
         form_dict = {'column_1_use': 'on', 'column_1_name': 'event_type', 'column_1_category': 'on',
                      'column_2_name': 'event_num',
                      'column_3_use': 'on', 'column_3_name': 'event_test',

@@ -5,8 +5,8 @@ from flask import current_app
 from hed.models import HedString, Sidecar, SpreadsheetInput, TabularInput
 from hed.errors import HedFileError
 from hed import schema as hedschema
-from hedweb.constants import base_constants
-from hedweb import events, spreadsheet, sidecar, strings
+from constants import base_constants
+import events, spreadsheet, sidecar, strings
 
 
 app_config = current_app.config

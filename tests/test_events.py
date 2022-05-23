@@ -7,21 +7,21 @@ from tests.test_web_base import TestWebBase
 from hed import schema as hedschema
 from hed.models import Sidecar, TabularInput
 from hed.errors.exceptions import HedFileError
-from hedweb.constants import base_constants
+from constants import base_constants
 
 
 class Test(TestWebBase):
     cache_schemas = True
 
     def test_get_input_from_events_form_empty(self):
-        from hedweb.events import get_events_form_input
+        from events import get_events_form_input
         self.assertRaises(TypeError, get_events_form_input, {},
                           "An exception should be raised if an empty request is passed")
         self.assertTrue(1, "Testing get_events_form_input")
 
     def test_get_input_from_events_form(self):
         from hed.schema import HedSchema
-        from hedweb.events import get_events_form_input
+        from events import get_events_form_input
         with self.app.test:
             json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
             events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
@@ -43,7 +43,7 @@ class Test(TestWebBase):
 
     def test_events_process_empty_file(self):
         # Test for empty events_path
-        from hedweb.events import process
+        from events import process
         arguments = {'events_path': ''}
         try:
             process(arguments)
@@ -55,7 +55,7 @@ class Test(TestWebBase):
             self.fail('process should have thrown a HedFileError exception when events_path was empty')
 
     def test_events_process_invalid(self):
-        from hedweb.events import process
+        from events import process
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events_bad.json')
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -73,7 +73,7 @@ class Test(TestWebBase):
                              'process validate should return warning when errors')
 
     def test_events_process_valid(self):
-        from hedweb.events import process
+        from events import process
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -92,7 +92,7 @@ class Test(TestWebBase):
             self.assertFalse(results["data"], 'process not return data no no errors')
 
     def test_events_assemble_invalid(self):
-        from hedweb.events import assemble
+        from events import assemble
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events_bad.json')
         json_sidecar = Sidecar(file=json_path, name='bids_events_bad')
@@ -108,7 +108,7 @@ class Test(TestWebBase):
                              'assemble msg_category should be warning when errors')
 
     def test_events_assemble_valid(self):
-        from hedweb.events import assemble
+        from events import assemble
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -123,7 +123,7 @@ class Test(TestWebBase):
                              'assemble msg_category should be success when no errors')
 
     def test_generate_sidecar_invalid(self):
-        from hedweb.events import generate_sidecar
+        from events import generate_sidecar
         with self.app.app_context():
             try:
                 results = generate_sidecar(None, columns_selected={'event_type': True})
@@ -135,7 +135,7 @@ class Test(TestWebBase):
                 self.fail('generate_sidecar should throw HedFileError when EventInput is None')
 
     def test_generate_sidecar_valid(self):
-        from hedweb.events import generate_sidecar
+        from events import generate_sidecar
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         events = TabularInput(file=events_path, name='bids_events')
         results = generate_sidecar(events,
@@ -147,7 +147,7 @@ class Test(TestWebBase):
                          'generate_sidecar msg_category should be success when no errors')
 
     def test_search_invalid(self):
-        from hedweb.events import search
+        from events import search
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         json_sidecar = Sidecar(file=json_path, name='bids_sidecar')
@@ -162,7 +162,7 @@ class Test(TestWebBase):
                              'make_query msg_category should be warning when errors')
 
     def test_events_search_valid(self):
-        from hedweb.events import search
+        from events import search
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -177,7 +177,7 @@ class Test(TestWebBase):
                              'make_query msg_category should be success when no errors')
 
     def test_events_validate_invalid(self):
-        from hedweb.events import validate
+        from events import validate
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events_bad.json')
         schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/HED8.0.0.xml')
@@ -192,7 +192,7 @@ class Test(TestWebBase):
                              'validate msg_category should be warning when errors')
 
     def test_events_validate_valid(self):
-        from hedweb.events import validate
+        from events import validate
         events_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.tsv')
         json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/bids_events.json')
         json_sidecar = Sidecar(file=json_path, name='bids_events')

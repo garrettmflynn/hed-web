@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 
 from hed import schema as hedschema
 from hed.errors import HedFileError
-from hedweb.constants import base_constants, file_constants
+from constants import base_constants, file_constants
 
 app_config = current_app.config
 

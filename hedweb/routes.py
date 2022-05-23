@@ -3,11 +3,11 @@ from werkzeug.utils import secure_filename
 import json
 
 from hed import schema as hedschema
-from hedweb.constants import base_constants, page_constants
-from hedweb.constants import route_constants, file_constants
-from hedweb.web_util import handle_http_error, package_results, handle_error
-from hedweb import sidecar, events, spreadsheet, services, strings, schema
-from hedweb.columns import get_columns_request
+from constants import base_constants, page_constants
+from constants import route_constants, file_constants
+from web_util import handle_http_error, package_results, handle_error
+import sidecar, events, spreadsheet, services, strings, schema
+from columns import get_columns_request
 
 app_config = current_app.config
 route_blueprint = Blueprint(route_constants.ROUTE_BLUEPRINT, __name__)

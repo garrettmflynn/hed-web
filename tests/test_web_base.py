@@ -1,7 +1,7 @@
 import os
 import shutil
 import unittest
-from hedweb.app_factory import AppFactory
+from app_factory import AppFactory
 import sys
 sys.path.append('hedtools')
 
@@ -19,7 +19,7 @@ class TestWebBase(unittest.TestCase):
             hedschema.set_cache_directory(app.config['HED_CACHE_FOLDER'])
             if cls.cache_schemas:
                 hedschema.cache_all_hed_xml_versions()
-            from hedweb.routes import route_blueprint
+            from routes import route_blueprint
             app.register_blueprint(route_blueprint)
             if not os.path.exists(cls.upload_directory):
                 os.mkdir(cls.upload_directory)

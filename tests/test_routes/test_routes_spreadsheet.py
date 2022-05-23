@@ -3,7 +3,7 @@ import os
 import unittest
 from flask import Response
 from tests.test_web_base import TestWebBase
-from hedweb.constants import base_constants
+from constants import base_constants
 
 
 class Test(TestWebBase):

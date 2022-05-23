@@ -8,8 +8,8 @@ from hed import schema as hedschema
 from hed.errors import get_printable_issue_string, HedFileError
 from hed.validator import HedValidator
 
-from hedweb.constants import base_constants
-from hedweb.web_util import form_has_option, get_hed_schema_from_pull_down
+from constants import base_constants
+from web_util import form_has_option, get_hed_schema_from_pull_down
 
 app_config = current_app.config
 
